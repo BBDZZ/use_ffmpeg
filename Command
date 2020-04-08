@@ -1,0 +1,71 @@
+import it.sauronsoftware.jave.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Command extends DefaultFFMPEGLocator {
+    public static void main(String[] args) {
+        //Command.changeSuffix();
+        //Command.videotTimeMinusTwo();
+        Command.getAudio();
+    }
+
+    public static void getAudio(){
+        try {
+            File file = new File("E:/lem");
+            String[] names = file.list();
+            for(String name : names){
+                String command = "C:\\Users\\Administrator\\Desktop\\ffmpeg.exe -i E:/lem/"+name+" -vn -acodec copy E:/lemmp3/"+name;
+                Process process = Runtime.getRuntime().exec(command);
+                process.waitFor();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void changeSuffix(){
+        File file = new File("E:\\lemmp3");
+        File[] files = file.listFiles();
+        for(File f : files){
+            StringBuffer name = new StringBuffer(f.getName());
+
+            name = name.replace(35,36,"3");
+            f.renameTo(new File("E:\\lemmp3\\"+name));
+        }
+    }
+
+    public static void videotTimeMinusTwo(){
+        File file = new File("G:\\FileRecv\\MobileFile\\lem");
+        String[] names = file.list();
+        // get video time
+        MultimediaInfo info = null;
+        int time;
+        for (String name : names) {
+            try {
+                File tmpFile = new File("G:\\FileRecv\\MobileFile\\lem\\" + name);
+                info = new Encoder().getInfo(tmpFile);
+                time = (int) (info.getDuration() / 1000) - 2;
+                String str = "C:\\Users\\Administrator\\Desktop\\ffmpeg.exe -ss 00 -i G:\\QQ\\FileRecv\\MobileFile\\lem\\" + name + " -to "+time+" -c copy -copyts E:\\lem\\" + name;
+                //long start = System.currentTimeMillis();
+                Process process = Runtime.getRuntime().exec(str);
+                process.waitFor();
+                //long end = System.currentTimeMillis();
+                //System.out.println(name+"转换成功,用时:"+(end-start)+"毫秒");
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }  catch (InputFormatException e) {
+                e.printStackTrace();
+            } catch (EncoderException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
